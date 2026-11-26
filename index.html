@@ -145,14 +145,11 @@
   </section>
 
   <section class="card" id="wind-maps">
-    <h2 id="wm-title">ERA5 10 m wind: monthly mean and anomaly</h2>
+    <h2 id="wm-title">ERA5 10 m wind: monthly mean</h2>
     <p class="sub"><b>Left:</b> climatological mean for the month (<span id="wm-clim">1993–2025</span>).
-      <b>Middle:</b> <span id="wm-period">the latest month</span>.
-      <b>Right:</b> anomaly (middle − left).
-      Colors show the mean wind speed (left and middle, same scale); on the right,
-      <b style="color:#c0392b">red</b> means the wind was stronger than usual at that location and
-      <b style="color:#2b6cb0">blue</b> weaker. Arrows show the direction of the mean wind (left and middle) and of
-      the anomaly (right), all at the same scale. ★ = Bamfield.
+      <b>Right:</b> <span id="wm-period">the latest month</span>.
+      Colors show the mean wind speed (same scale in both maps) and arrows the direction and strength of the mean
+      wind (same scale in both maps). ★ = Bamfield.
       <span id="wm-days"></span></p>
     <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
          style="width:100%; height:auto; border-radius:8px; display:block;">
@@ -226,7 +223,7 @@ async function main() {
     if (wm.last_day < new Date(wm.year, wm.month, 0).getDate())
       document.getElementById("wm-days").textContent =
         `The month is not complete yet in ERA5, so the climatology uses the same days (1–${wm.last_day}).`;
-    document.getElementById("wm-img").src = `wind_maps.png?v=${wm.year}${wm.month}${wm.last_day}`;
+    document.getElementById("wm-img").src = `wind_maps.png?v=${wm.generated || Date.now()}`;
   } catch (e) {
     document.getElementById("wind-maps").hidden = true;      // no maps yet
   }

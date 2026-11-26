@@ -3,5 +3,7 @@
   "month": 11,
   "period": "November 1\u201320 2026",
   "clim": "1993\u20132025",
-  "last_day": 20
+  "last_day": 20,
+  "anomaly": false,
+  "generated": "20261126153328"
 }
