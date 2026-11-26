@@ -135,7 +135,10 @@
     <p class="sub" id="wind-note" hidden>Bottom panel: daily ERA5 10 m wind at the nearest ERA5 grid point
       (<span id="wind-pt"></span>), projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
       the northwest). <b style="color:#2b6cb0">Positive</b>: poleward wind, downwelling-favorable.
-      <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.</p>
+      <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.
+      Index = u·sin θ + v·cos θ, with θ the alongshore direction (red arrow on the wind maps).
+      The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 31-day running mean),
+      repeated every year, to compare any year with the usual seasonal cycle.</p>
     <div class="stats">
       <div class="stat"><div class="k">Latest</div><div class="v" id="s-last">–</div></div>
       <div class="stat"><div class="k">30-day mean</div><div class="v" id="s-30">–</div></div>
@@ -150,6 +153,8 @@
       <b>Right:</b> <span id="wm-period">the latest month</span>.
       Colors show the mean wind speed (same scale in both maps) and arrows the direction and strength of the mean
       wind (same scale in both maps). ★ = Bamfield.
+      <b style="color:#d62728">Red arrow</b>: alongshore direction used for the wind index in the time series
+      (toward the northwest; positive = downwelling-favorable).
       <span id="wm-days"></span></p>
     <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
          style="width:100%; height:auto; border-radius:8px; display:block;">
@@ -196,6 +201,7 @@
 
 <script>
 const fmt = v => (v >= 0 ? "+" : "") + v.toFixed(1) + " cm";
+let climYears = "1993–2025";
 
 async function main() {
   // --- metadata ---
@@ -211,6 +217,10 @@ async function main() {
       document.getElementById("wind-pt").textContent =
         `${meta.wind_lat.toFixed(2)}°N, ${Math.abs(meta.wind_lon).toFixed(2)}°W`;
       document.getElementById("wind-ang").textContent = meta.coast_angle;
+      if (meta.wind_clim) {
+        climYears = meta.wind_clim.replace("-", "–");
+        document.getElementById("wind-clim").textContent = climYears;
+      }
     }
   } catch (e) { /* page still works without meta.json */ }
 
@@ -245,6 +255,8 @@ async function main() {
   const y = rows.map(r => r[1] === "" ? null : +r[1]);
   const hasWind = text.split("\n")[0].includes("wind_along_ms");
   const w = hasWind ? rows.map(r => (r[2] === undefined || r[2].trim() === "") ? null : +r[2]) : [];
+  const hasClim = text.split("\n")[0].includes("wind_along_clim_ms");
+  const wc = hasClim ? rows.map(r => (r[3] === undefined || r[3].trim() === "") ? null : +r[3]) : [];
 
   // centred 30-day running mean (needs at least 15 valid days)
   const half = 15, sm = new Array(y.length).fill(null);
@@ -278,6 +290,7 @@ async function main() {
     margin: {t: 10, r: 15, b: 40, l: 60},
     hovermode: "x unified",
     legend: {orientation: "h", y: 1.06, x: 0},
+    modebar: {orientation: "v"},
     yaxis: {title: {text: "SSHA (cm)"}, zeroline: true, zerolinecolor: "#888", gridcolor: "#eef1f4"},
     xaxis: {
       type: "date", gridcolor: "#eef1f4",
@@ -306,6 +319,10 @@ async function main() {
       {x, y: w, yaxis: "y2", type: "scatter", mode: "lines", name: "alongshore wind",
        line: {width: 0}, showlegend: false, hovertemplate: "%{y:.1f} m/s<extra>alongshore wind</extra>"},
     );
+    if (hasClim) traces.push(
+      {x, y: wc, yaxis: "y2", type: "scatter", mode: "lines", name: `Wind climatology (${climYears})`,
+       line: {color: "#222", width: 1.6, dash: "dot"},
+       hovertemplate: "%{y:.1f} m/s<extra>climatology</extra>"});
     layout.yaxis.domain = [0.40, 1];
     layout.yaxis2 = {domain: [0, 0.32], title: {text: "Alongshore wind (m/s)"}, zeroline: true,
                      zerolinecolor: "#888", gridcolor: "#eef1f4"};
