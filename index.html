@@ -34,6 +34,15 @@
   .stat .k { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
   .stat .v { font-size: 1.35rem; font-weight: 650; font-variant-numeric: tabular-nums; }
   .notes { color: var(--muted); font-size: .9rem; }
+  .panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.1rem; }
+  .panel { border: 1px solid var(--line); border-radius: 10px; padding: .8rem 1rem; }
+  .panel h3 { margin: 0 0 .45rem; font-size: 1rem; line-height: 1.35; }
+  .panel .tag { display: inline-block; font-size: .72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .04em; color: #fff; background: var(--accent); border-radius: 4px;
+    padding: .05rem .4rem; margin-right: .3rem; vertical-align: 1px; }
+  .panel ul { margin: 0; padding-left: 1.1rem; font-size: .92rem; color: #2c3644; }
+  .panel li { margin-bottom: .35rem; }
+  @media (max-width: 900px) { .panels { grid-template-columns: 1fr; } }
   .notes ul { margin: .4rem 0 0; padding-left: 1.2rem; }
   a { color: var(--accent); }
   .err { color: var(--warm); }
@@ -50,12 +59,47 @@
 <main>
   <section class="card">
     <h2 id="video-title">Daily evolution</h2>
-    <p class="sub">Left: SSHA relative to the <span class="mp">1993–2025</span> mean, with daily-mean ERA5 10 m winds.
-      Right: SSHA off Bamfield (★) and a Hovmöller of SSHA along the 1000 m isobath (35–55°N, green line on the map),
-      with the frame's date marked.</p>
+    <p class="sub">Each frame is one day. The three panels move together: the date in the title is the
+      day shown on the map and the day marked on both panels to the right.</p>
     <video controls preload="metadata" playsinline src="ssha_bamfield.mp4">
       Your browser can't play this video. <a href="ssha_bamfield.mp4">Download it</a>.
     </video>
+
+    <div class="panels">
+      <div class="panel">
+        <h3><span class="tag">Left</span> Map: sea surface height anomaly and wind</h3>
+        <ul>
+          <li><b>Colors:</b> sea surface height anomaly (SSHA, cm) relative to the <span class="mp">1993–2025</span>
+            mean at each point. Red means sea level is higher than average for that location; blue, lower.
+            The color scale is the same in every frame.</li>
+          <li><b>Black arrows:</b> ERA5 10 m wind, daily mean. The arrow above the map is the 10 m/s reference;
+            the arrow scale doesn't change between frames, so lengths can be compared from day to day.</li>
+          <li><b>Green line:</b> the 1000 m isobath, along which the Hovmöller (bottom right) is taken.</li>
+          <li><b>★:</b> the grid point off Bamfield used for the time series (top right).</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3><span class="tag">Top right</span> SSHA time series off Bamfield</h3>
+        <ul>
+          <li>Daily SSHA (cm) at the ★ point, for the whole year.</li>
+          <li><b>Grey:</b> the full year. <b>Blue:</b> from January 1 to the frame's date.</li>
+          <li><b>Red dot and dashed line:</b> the frame's date, with its value written in the top-left corner.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3><span class="tag">Bottom right</span> Hovmöller along the 1000 m isobath</h3>
+        <ul>
+          <li>SSHA along the continental slope (green line on the map), from 35°N (central California) to
+            55°N (northern British Columbia / southeast Alaska).</li>
+          <li><b>Horizontal axis:</b> time (same as the panel above). <b>Vertical axis:</b> latitude.
+            Each vertical strip is one day; same colors as the map.</li>
+          <li><b>Black vertical line:</b> the frame's date. <b>Dotted horizontal line:</b> latitude of Bamfield.</li>
+          <li><b>How to read it:</b> a vertical band means sea level rose or fell along the whole coast at the
+            same time. A band tilted upward to the right means the signal is moving north along the coast over
+            time, as coastal-trapped waves do.</li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <section class="card">
