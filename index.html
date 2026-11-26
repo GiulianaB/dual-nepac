@@ -146,13 +146,13 @@
 
   <section class="card" id="wind-maps">
     <h2 id="wm-title">ERA5 10 m wind: monthly mean and anomaly</h2>
-    <p class="sub">Left: climatological mean wind for the month (<span id="wm-clim">1993–2025</span>).
-      Middle: mean wind for <span id="wm-period">the latest month</span>.
-      Right: anomaly (middle − left). Arrows are vector means of hourly ERA5 10 m wind, drawn at the same scale in
-      the three panels. Colors show wind speed (left and middle, same scale) and, on the right, the anomaly projected
-      on the alongshore direction of Vancouver Island (<span id="wm-ang">315</span>°):
-      <b style="color:#2b6cb0">blue</b> = toward the northwest (downwelling-favorable),
-      <b style="color:#c0392b">red</b> = toward the southeast (upwelling-favorable). ★ = Bamfield.
+    <p class="sub"><b>Left:</b> climatological mean for the month (<span id="wm-clim">1993–2025</span>).
+      <b>Middle:</b> <span id="wm-period">the latest month</span>.
+      <b>Right:</b> anomaly (middle − left).
+      Colors show the mean wind speed (left and middle, same scale); on the right,
+      <b style="color:#c0392b">red</b> means the wind was stronger than usual at that location and
+      <b style="color:#2b6cb0">blue</b> weaker. Arrows show the direction of the mean wind (left and middle) and of
+      the anomaly (right), all at the same scale. ★ = Bamfield.
       <span id="wm-days"></span></p>
     <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
          style="width:100%; height:auto; border-radius:8px; display:block;">
@@ -223,7 +223,6 @@ async function main() {
     document.getElementById("wm-title").textContent = `ERA5 10 m wind: ${wm.period}`;
     document.getElementById("wm-period").textContent = wm.period;
     document.getElementById("wm-clim").textContent = wm.clim;
-    document.getElementById("wm-ang").textContent = wm.coast_angle;
     if (wm.last_day < new Date(wm.year, wm.month, 0).getDate())
       document.getElementById("wm-days").textContent =
         `The month is not complete yet in ERA5, so the climatology uses the same days (1–${wm.last_day}).`;
