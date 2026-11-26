@@ -34,6 +34,7 @@
   .stat { border: 1px solid var(--line); border-radius: 10px; padding: .55rem .9rem; min-width: 170px; }
   .stat .k { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
   .stat .v { font-size: 1.35rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .stat .d { color: var(--muted); font-size: .8rem; margin-top: .1rem; }
   .notes { color: var(--muted); font-size: .9rem; }
   .byline { display: flex; gap: 2.2rem; flex-wrap: wrap; margin-top: 1.1rem; font-size: .95rem; }
   .byline .k, .toc .k { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; opacity: .7; }
@@ -142,7 +143,8 @@
     <div class="stats">
       <div class="stat"><div class="k">Latest</div><div class="v" id="s-last">–</div></div>
       <div class="stat"><div class="k">30-day mean</div><div class="v" id="s-30">–</div></div>
-      <div class="stat"><div class="k">Record high</div><div class="v" id="s-max">–</div></div>
+      <div class="stat"><div class="k">Record high</div><div class="v" id="s-max">–</div>
+        <div class="d" id="s-max-d"></div></div>
     </div>
     <div id="chart"></div>
   </section>
@@ -250,22 +252,33 @@ async function main() {
       '(If you opened this file directly from disk, serve it with “python -m http.server”.)</p>';
     return;
   }
-  const rows = text.trim().split("\n").slice(1).map(l => l.split(","));
+  const lines = text.trim().split("\n");
+  const hdr = lines[0].trim().split(",");
+  const rows = lines.slice(1).map(l => l.split(","));
+  const num = name => {                    // column by name -> numbers (null if missing/empty)
+    const k = hdr.indexOf(name);
+    return k < 0 ? null : rows.map(r => (r[k] === undefined || r[k].trim() === "") ? null : +r[k]);
+  };
   const x = rows.map(r => r[0]);
-  const y = rows.map(r => r[1] === "" ? null : +r[1]);
-  const hasWind = text.split("\n")[0].includes("wind_along_ms");
-  const w = hasWind ? rows.map(r => (r[2] === undefined || r[2].trim() === "") ? null : +r[2]) : [];
-  const hasClim = text.split("\n")[0].includes("wind_along_clim_ms");
-  const wc = hasClim ? rows.map(r => (r[3] === undefined || r[3].trim() === "") ? null : +r[3]) : [];
+  const y = num("ssha_cm");
+  const sc = num("ssha_clim_cm");
+  const w = num("wind_along_ms") || [];
+  const hasWind = w.length > 0;
+  const wc = num("wind_along_clim_ms") || [];
+  const hasClim = wc.length > 0;
 
   // centred 30-day running mean (needs at least 15 valid days)
-  const half = 15, sm = new Array(y.length).fill(null);
-  for (let k = 0; k < y.length; k++) {
-    let s = 0, n = 0;
-    for (let q = Math.max(0, k - half); q <= Math.min(y.length - 1, k + half - 1); q++)
-      if (y[q] !== null) { s += y[q]; n++; }
-    if (n >= 15) sm[k] = s / n;
-  }
+  const runmean = arr => {
+    const half = 15, out = new Array(arr.length).fill(null);
+    for (let k = 0; k < arr.length; k++) {
+      let t = 0, n = 0;
+      for (let q = Math.max(0, k - half); q <= Math.min(arr.length - 1, k + half - 1); q++)
+        if (arr[q] !== null) { t += arr[q]; n++; }
+      if (n >= 15) out[k] = t / n;
+    }
+    return out;
+  };
+  const sm = runmean(y);
 
   // stats
   let lastK = y.length - 1; while (lastK > 0 && y[lastK] === null) lastK--;
@@ -276,6 +289,12 @@ async function main() {
   document.getElementById("s-30").textContent = fmt(recent.reduce((a, b) => a + b, 0) / recent.length);
   document.getElementById("s-max").textContent = fmt(y[maxK]);
   document.getElementById("s-max").title = x[maxK];
+  {
+    const d = new Date(x[maxK] + "T00:00:00");
+    const nyears = +x[x.length - 1].slice(0, 4) - +x[0].slice(0, 4) + 1;
+    document.getElementById("s-max-d").textContent =
+      `${d.toLocaleDateString("en-GB", {day: "numeric", month: "short", year: "numeric"})} · highest in ${nyears} years`;
+  }
 
   const lastYear = x[lastK].slice(0, 4);
   const traces = [
@@ -286,6 +305,9 @@ async function main() {
     {x: [x[lastK]], y: [y[lastK]], type: "scatter", mode: "markers", name: "Latest",
      marker: {color: "#c0392b", size: 9}, hovertemplate: "%{y:.1f} cm<extra>latest</extra>"},
   ];
+  if (sc) traces.push(
+    {x, y: sc, type: "scatter", mode: "lines", name: `SSHA climatology (${climYears})`,
+     line: {color: "#222", width: 1.6, dash: "dot"}, hovertemplate: "%{y:.1f} cm<extra>SSHA climatology</extra>"});
   const layout = {
     margin: {t: 10, r: 15, b: 40, l: 60},
     hovermode: "x unified",
@@ -311,22 +333,28 @@ async function main() {
     const neg = w.map(v => v === null ? null : Math.min(v, 0));
     traces.push(
       {x, y: pos, yaxis: "y2", type: "scatter", mode: "lines", fill: "tozeroy",
-       name: "Downwelling-favorable wind (+)", line: {color: "#2b6cb0", width: 0.6},
-       fillcolor: "rgba(43,108,176,0.55)", hoverinfo: "skip"},
+       legend: "legend2", name: "Downwelling-favorable wind (+)", line: {color: "#2b6cb0", width: 0.6},
+       fillcolor: "rgba(43,108,176,0.25)", hoverinfo: "skip"},
       {x, y: neg, yaxis: "y2", type: "scatter", mode: "lines", fill: "tozeroy",
-       name: "Upwelling-favorable wind (−)", line: {color: "#d9822b", width: 0.6},
-       fillcolor: "rgba(217,130,43,0.55)", hoverinfo: "skip"},
+       legend: "legend2", name: "Upwelling-favorable wind (−)", line: {color: "#d9822b", width: 0.6},
+       fillcolor: "rgba(217,130,43,0.25)", hoverinfo: "skip"},
       {x, y: w, yaxis: "y2", type: "scatter", mode: "lines", name: "alongshore wind",
        line: {width: 0}, showlegend: false, hovertemplate: "%{y:.1f} m/s<extra>alongshore wind</extra>"},
     );
+    traces.push(
+      {x, y: runmean(w), yaxis: "y2", legend: "legend2", type: "scatter", mode: "lines", name: "30-day mean",
+       line: {color: "#0b3c6e", width: 2.4}, hovertemplate: "%{y:.1f} m/s<extra>wind 30-day mean</extra>"});
     if (hasClim) traces.push(
-      {x, y: wc, yaxis: "y2", type: "scatter", mode: "lines", name: `Wind climatology (${climYears})`,
+      {x, y: wc, yaxis: "y2", legend: "legend2", type: "scatter", mode: "lines", name: `Climatology (${climYears})`,
        line: {color: "#222", width: 1.6, dash: "dot"},
        hovertemplate: "%{y:.1f} m/s<extra>climatology</extra>"});
-    layout.yaxis.domain = [0.40, 1];
+    layout.yaxis.domain = [0.44, 1];
     layout.yaxis2 = {domain: [0, 0.32], title: {text: "Alongshore wind (m/s)"}, zeroline: true,
                      zerolinecolor: "#888", gridcolor: "#eef1f4"};
     layout.xaxis.anchor = "y2";
+    // legend of the wind panel, just above it
+    layout.legend2 = {orientation: "h", x: 0, y: 0.335, yanchor: "bottom", xref: "paper", yref: "paper",
+                      bgcolor: "rgba(255,255,255,0.8)"};
   }
   Plotly.newPlot("chart", traces, layout, {responsive: true, displaylogo: false});
 }
