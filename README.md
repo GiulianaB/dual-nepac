@@ -5,17 +5,6 @@ altimetry and ERA5 winds for the Northeast Pacific (35–60°N, 150–120°W).
 
 Live page: <https://giulianab.github.io/dual-nepac/>
 
-## Story
-
-1. **The highest sea level on record off Bamfield.** Daily SSHA time series, 1993 to present, with its daily
-   climatology and the 1993–2025 linear trend.
-2. **Downwelling-favorable winds played a role.** ERA5 10 m wind maps: climatology for the same days, current
-   period, and the alongshore wind in the time series.
-3. **The local wind alone cannot explain the rise.** Cross-correlation and 10-day block means of sea level vs.
-   alongshore wind (linear trend removed).
-4. **No clear propagation of a wave along the coast.** Hovmöller of the daily sea level anomaly along the 200 m
-   isobath, 35–55°N (seasonal cycle removed, trend not removed).
-5. **Day by day.** Video: SSHA map with winds, SSHA off Bamfield, and SSHA along the isobath.
 
 ## Files in `site/`
 
@@ -47,23 +36,6 @@ git add -A
 git commit -m "Update data"
 git push
 ```
-
-GitHub Pages refreshes the site in a minute or two. Browsers may keep the old page for up to about 10 minutes;
-use a forced reload (Cmd+Shift+R) or a private window to check.
-
-## Methods (short)
-
-- **SSHA** = DUACS SLA minus its 1993–2025 time mean, at the grid point nearest Bamfield.
-- **Daily climatology**: mean of each calendar day over 1993–2025, smoothed with a centered, circular running
-  mean of 10 days (climatologies drawn on the page and Hovmöller).
-- **Alongshore wind**: ERA5 10 m wind projected onto 315° (toward the northwest, poleward); positive =
-  downwelling-favorable.
-- **Section 3**: daily SSHA and alongshore wind (the series of section 1), slope of the 1993–2025 linear trend
-  removed from all years; cross-correlation at lags 0–30 days; then the wind is shifted by the best lag and both
-  series are averaged in consecutive 10-day blocks.
-- **Section 4**: daily SSHA along the 200 m isobath minus the daily climatology of each point; trend not removed.
-
-## Data
 
 - Sea level: Copernicus Marine Service, DUACS L4 0.125° daily (MY where available, NRT for the most recent days).
 - Wind: ECMWF ERA5 hourly 10 m wind (u10, v10), averaged per day.
