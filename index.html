@@ -205,8 +205,8 @@
     <h2 id="video-title">5. Day by day</h2>
     <p class="sub">Each frame is one day. The three panels move together: the date in the title is the
       day shown on the map and the day marked on both panels to the right.</p>
-    <video controls preload="metadata" playsinline src="ssha_bamfield.mp4">
-      Your browser can't play this video. <a href="ssha_bamfield.mp4">Download it</a>.
+    <video id="vid" controls preload="metadata" playsinline>
+      Your browser can't play this video. <a id="vid-link" href="ssha_bamfield.mp4">Download it</a>.
     </video>
 
     <div class="panels">
@@ -302,6 +302,11 @@ async function main() {
       `(nearest DUACS grid point with data), ${meta.start} to ${meta.end}.`;
     document.getElementById("data-end").textContent = meta.end;
     document.querySelectorAll(".mp").forEach(e => e.textContent = meta.mean_period.replace("-", "–"));
+    if (meta.video_generated) {
+      const vsrc = `ssha_bamfield.mp4?v=${meta.video_generated}`;
+      document.getElementById("vid").src = vsrc;
+      document.getElementById("vid-link").href = vsrc;
+    }
     if (meta.video_year) document.getElementById("video-title").textContent = `5. Day by day, ${meta.video_year}`;
     if (meta.wind_lat != null) {
       document.getElementById("wind-pt").textContent =
@@ -313,6 +318,8 @@ async function main() {
       }
     }
   } catch (e) { /* page still works without meta.json */ }
+  const vid = document.getElementById("vid");
+  if (!vid.getAttribute("src")) vid.src = "ssha_bamfield.mp4";
 
   // --- wind maps ---
   try {
