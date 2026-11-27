@@ -129,7 +129,7 @@
       the wind along the coast.</p>
     <p class="sub" id="point">Daily SSHA at the nearest DUACS grid point with data.</p>
     <p class="sub" id="wind-note" hidden>Bottom panel: daily ERA5 10 m wind at the nearest ERA5 grid point
-      (<span id="wind-pt"></span>), projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
+      (<span id="wind-pt"></span>), <span id="wind-range"></span>, projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
       the northwest; red arrow on the wind maps). <b style="color:#2b6cb0">Positive</b>: poleward wind,
       downwelling-favorable. <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.
       The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 10-day running mean),
@@ -467,6 +467,9 @@ async function main() {
   if (hasWind && w.some(v => v !== null)) {
     document.getElementById("chart").classList.add("with-wind");
     document.getElementById("wind-note").hidden = false;
+    let w0 = 0; while (w0 < w.length && w[w0] === null) w0++;
+    let w1 = w.length - 1; while (w1 > 0 && w[w1] === null) w1--;
+    document.getElementById("wind-range").textContent = `${x[w0]} to ${x[w1]}`;
     const pos = w.map(v => v === null ? null : Math.max(v, 0));
     const neg = w.map(v => v === null ? null : Math.min(v, 0));
     traces.push(
