@@ -29,7 +29,7 @@
   .card .sub { margin: 0 0 1rem; color: var(--muted); font-size: .95rem; }
   video { width: 100%; height: auto; border-radius: 8px; background: #000; display: block; }
   #chart { width: 100%; height: 470px; }
-  #chart.with-wind, #chart2 { width: 100%; height: 660px; }
+  #chart.with-wind { height: 660px; }
   .stats { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0 0 .75rem; }
   .stat { border: 1px solid var(--line); border-radius: 10px; padding: .55rem .9rem; min-width: 170px; }
   .stat .k { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
@@ -126,8 +126,17 @@
       <span id="s1-mtd-typ">+4.7 cm</span> in a typical year. <span id="s1-sep">The rise began earlier: September 2026 was
       already the highest September in the record.</span></p>
     <p class="sub" id="point" style="margin-bottom:.2rem">Daily SSHA at the nearest DUACS grid point with data.</p>
-    <p class="sub" id="top-note">Dotted line: the daily climatology of sea level (<span class="mp">1993–2025</span>,
-      10-day running mean); dashed red line: the long-term linear trend (<span id="s1-trend">–</span>).</p>
+    <p class="sub" id="wind-point" hidden>Daily ERA5 10 m wind at the nearest ERA5 grid point
+      (<span id="wind-pt"></span>), <span id="wind-range"></span>.</p>
+    <p class="sub" id="top-note" style="margin-bottom:.2rem">Top panel: sea level. Dotted line: its daily
+      climatology (<span class="mp">1993–2025</span>, 10-day running mean); dashed red line: the long-term linear
+      trend (<span id="s1-trend">–</span>).</p>
+    <p class="sub" id="wind-note" hidden>Bottom panel: the wind projected onto the alongshore direction
+      (<span id="wind-ang">315</span>°, toward the northwest; red arrow on the wind maps).
+      <b style="color:#2b6cb0">Positive</b>: poleward wind, downwelling-favorable.
+      <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.
+      The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 10-day running mean),
+      repeated every year, to compare any year with the usual seasonal cycle.</p>
     <div class="stats">
       <div class="stat"><div class="k" id="s-last-k">Latest</div><div class="v" id="s-last">–</div></div>
       <div class="stat"><div class="k">Last 10 days</div><div class="v" id="s-30">–</div></div>
@@ -135,14 +144,6 @@
         <div class="d" id="s-max-d"></div></div>
     </div>
     <div id="chart"></div>
-    <div id="sy-block" hidden>
-      <p class="sub" style="margin-top:1.5rem">Every year from January to December: sea level off Bamfield
-        (SSHA relative to the <span class="mp">1993–2025</span> mean, 10-day running mean).
-        Grey: one line per year. Red: the year chosen below.</p>
-      <label class="sub" for="sy-sel">Year in red:
-        <select id="sy-sel" style="font-size:.95rem; margin-left:.3rem"></select></label>
-      <div id="sy-chart" style="width:100%; height:430px"></div>
-    </div>
   </section>
 
   <section class="card" id="wind-maps">
@@ -156,17 +157,12 @@
       <span id="wm-days"></span></p>
     <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
          style="width:100%; height:auto; border-radius:8px; display:block;">
-    <div id="s2-series" hidden>
-      <p class="sub" style="margin-top:1.5rem; margin-bottom:.2rem">(A) Sea level off Bamfield, as in section 1.
-        (B) Daily ERA5 10 m wind at the nearest ERA5 grid point (<span id="wind-pt"></span>),
-        <span id="wind-range"></span>, projected onto the alongshore direction (<span id="wind-ang">315</span>°,
-        toward the northwest; red arrow on the maps). <b style="color:#2b6cb0">Positive</b>: poleward wind,
-        downwelling-favorable. <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.</p>
-      <p class="sub">Dotted lines: daily climatologies (<span id="wind-clim">1993–2025</span>, 10-day running mean),
-        repeated every year, to compare any year with the usual seasonal cycle.</p>
-      <div id="chart2"></div>
-    </div>
-    <p style="margin-top:1.5rem">Winds like those of 2026 had been seen before, even lasting longer; sea levels like
+  </section>
+
+  <section class="card" id="diagnostic">
+    <h2>3. The local wind alone cannot explain the rise</h2>
+    <p class="lead">The local wind explains only part of the sea level off Bamfield, and in 2026 sea level was higher than expected due to the winds.</p>
+    <p>Winds like those of 2026 had been seen before, even lasting longer; sea levels like
       those of 2026 had not. In October–November 2016 the downwelling-favorable winds were stronger and more persistent
       than in 2026: from 1 October to 21 November they averaged 4.1 m/s, against 1.6 m/s in 2026. Yet sea level in
       2016 rose to only about 25 cm. In 2026 the downwelling-favorable winds lasted about three weeks, from early
@@ -179,13 +175,8 @@
         <select id="wy-sel" style="font-size:.95rem; margin-left:.3rem"></select></label>
       <div id="wy-chart" style="width:100%; height:720px"></div>
     </div>
-  </section>
-
-  <section class="card" id="diagnostic">
-    <h2>3. The local wind alone cannot explain the rise</h2>
-    <p class="lead">The local wind explains only part of the sea level off Bamfield, and in 2026 sea level was higher than expected due to the winds.</p>
     <p>On the west coast, poleward winds push water toward the coast and raise sea level. To measure how much of the sea level the local wind
-      explains, we compared the daily alongshore wind with sea level (the two time series of section 2) over
+      explains, we compared the daily alongshore wind with sea level (the two time series of section 1) over
       <span class="dg-clim">1993–2025</span>. Their cross-correlation (A) peaks when the wind leads sea level by
       <span id="dg-lag">4</span> days (r = <span id="dg-r">0.44</span>). Using that lag and
       consecutive <span id="dg-days">10</span>-day means (B; resample, not a running mean), the usual relationship between wind and sea level (grey points
@@ -195,7 +186,7 @@
       the time series above). In November the winds became strongly downwelling-favorable, but sea level rose far
       above what the relationship predicts, and one of the November points lies outside the cloud of previous years.
       Another forcing added to the local wind.</p>
-    <p class="sub">Both series are the daily time series of section 2: SSHA off Bamfield (DUACS, relative to the
+    <p class="sub">Both series are the daily time series of section 1: SSHA off Bamfield (DUACS, relative to the
       1993–2025 mean) and the ERA5 10 m wind projected onto the red arrow (m/s). No climatology is removed, so the
       seasonal cycle is included. Before the analysis, both time series are detrended. Panel A uses the daily series of
       1993–2025; panel B uses 10-day means, with the wind shifted by the lag of maximum correlation.</p>
@@ -443,15 +434,16 @@ async function main() {
   const lastYear = x[lastK].slice(0, 4);
   keyPoints(x, y, w, maxK, lastK);
   const windOK = hasWind && w.some(v => v !== null);
-  drawSeries("chart", false);                      // section 1: sea level only
-  if (windOK) {                                    // section 2: (A) sea level, (B) wind
-    document.getElementById("s2-series").hidden = false;
-    drawSeries("chart2", true);
+  if (windOK) {                                    // section 1: sea level and, below, the wind
+    document.getElementById("chart").classList.add("with-wind");
+    document.getElementById("wind-point").hidden = false;
+    document.getElementById("wind-note").hidden = false;
   }
-  const panelSSHA = {data: sm, unit: "cm", title: "SSHA (cm)"};
-  yearsChart("sy-chart", "sy-sel", "sy-block", [panelSSHA]);
-  if (windOK) yearsChart("wy-chart", "wy-sel", "wy-block",
-    [{...panelSSHA, title: "A) SSHA (cm)"}, {data: runmean(w), unit: "m/s", title: "B) Alongshore wind (m/s)"}]);
+  drawSeries("chart", windOK);
+  // section 3: every year Jan-Dec, (A) sea level and (B) wind, year in red chosen by the reader
+  const panelSSHA = {data: sm, unit: "cm", title: "A) SSHA (cm)"};
+  yearsChart("wy-chart", "wy-sel", "wy-block",
+    windOK ? [panelSSHA, {data: runmean(w), unit: "m/s", title: "B) Alongshore wind (m/s)"}] : [panelSSHA]);
 
   function drawSeries(div, withWind) {
   const traces = [
@@ -504,7 +496,6 @@ async function main() {
     },
   };
   if (withWind) {
-    layout.yaxis.title.text = "A) SSHA (cm)";
     let w0 = 0; while (w0 < w.length && w[w0] === null) w0++;
     let w1 = w.length - 1; while (w1 > 0 && w[w1] === null) w1--;
     document.getElementById("wind-range").textContent = `${x[w0]} to ${x[w1]}`;
@@ -528,7 +519,7 @@ async function main() {
        line: {color: "#222", width: 1.6, dash: "dot"},
        hovertemplate: "%{y:.1f} m/s<extra>climatology</extra>"});
     layout.yaxis.domain = [0.44, 1];
-    layout.yaxis2 = {domain: [0, 0.32], title: {text: "B) Alongshore wind (m/s)"}, zeroline: true,
+    layout.yaxis2 = {domain: [0, 0.32], title: {text: "Alongshore wind (m/s)"}, zeroline: true,
                      zerolinecolor: "#888", gridcolor: "#eef1f4"};
     layout.xaxis.anchor = "y2";
     // legend of the wind panel, just above it
