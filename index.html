@@ -132,7 +132,7 @@
       (<span id="wind-pt"></span>), projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
       the northwest; red arrow on the wind maps). <b style="color:#2b6cb0">Positive</b>: poleward wind,
       downwelling-favorable. <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.
-      The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 31-day running mean),
+      The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 10-day running mean),
       repeated every year, to compare any year with the usual seasonal cycle.</p>
     <div class="stats">
       <div class="stat"><div class="k">Latest</div><div class="v" id="s-last">–</div></div>
@@ -159,19 +159,21 @@
 
   <section class="card" id="diagnostic">
     <h2>3. The local wind alone cannot explain the rise</h2>
-    <p class="lead">On the west coast, poleward wind pushes water toward the coast (Ekman transport, to the right of the wind
-      in the Northern Hemisphere) and raises sea level, with a maximum correlation at a lag of <span id="dg-lag">4</span>
-      days. <b>But the wind alone is not enough:</b> it explains only about <span id="dg-pct">31</span>% of the sea level
-      variability (R² = <span id="dg-r2">0.31</span>, <span class="dg-days2">10</span>-day means).
-      In September–October 2026 the winds were weak or upwelling-favorable (see the time series above), yet sea level
-      was already high, above the grey cloud for those winds. In November the winds were downwelling-favorable, but sea
-      level was far higher than the usual relationship predicts, well outside the cloud.</p>
-    <p class="sub"><b>Left, cross-correlation:</b> correlation (r) between the alongshore wind stress and sea level off
-      Bamfield, daily data <span class="dg-clim">1993–2025</span>, with the wind leading by 0–30 days; maximum
-      r = <span id="dg-r">0.31</span> at <span class="dg-lag2">4</span> days. <b>Right:</b> sea level against the wind
-      <span class="dg-lag2">4</span> days earlier, in <span id="dg-days">10</span>-day means. Grey: all
-      <span class="dg-clim">1993–2025</span>; black line: what the local wind usually explains. Colored: 2026.
-      Anomalies relative to the daily climatology; for 2026 the long-term sea level rise is removed.</p>
+    <p class="lead">The local wind explains only part of the sea level off Bamfield, and in 2026 sea level rose far
+      above what the wind alone can produce.</p>
+    <p>On the west coast, poleward winds push water toward the coast (Ekman transport is directed to the right of the
+      wind in the Northern Hemisphere) and raise sea level. To measure how much of the sea level the local wind
+      explains, we compared the daily alongshore wind stress with the sea level anomaly over
+      <span class="dg-clim">1993–2025</span>. Their cross-correlation (left) peaks when the wind leads sea level by
+      <span id="dg-lag">4</span> days (r = <span id="dg-r">0.31</span>). Using that lag and
+      <span id="dg-days">10</span>-day means (right), the usual relationship between wind and sea level (grey points
+      and black line) explains only about <span id="dg-pct">31</span>% of the variability
+      (R² = <span id="dg-r2">0.31</span>).</p>
+    <p>In 2026 (colored points) sea level departed from that relationship. In September and October it was already
+      high while the winds were weak or upwelling-favorable (see also the time series above). In November the winds
+      became strongly downwelling-favorable, but sea level rose far above what the relationship predicts, outside the
+      cloud of previous years. Another forcing added to the local wind.</p>
+    <p class="sub">Anomalies are relative to the daily climatology; for 2026 the long-term sea level rise is removed.</p>
     <img id="dg-img" src="wind_diagnostic.png" alt="Wind and sea level off Bamfield: lagged correlation and scatter"
          style="width:100%; height:auto; border-radius:8px; display:block;">
   </section>
@@ -181,7 +183,7 @@
     <p class="sub">Sea level anomaly along the <span id="hv-iso">250</span> m isobath (near the shelf break) from 35°N to
       55°N, relative to the daily climatology, so the seasonal cycle is removed. <b>Top:</b> the whole year.
       <b>Bottom:</b> the last 90 days. During El Niño, coastally trapped Kelvin waves have been tracked travelling north
-      along this coast at 2–3 m/s (<a href="https://digitalcommons.usf.edu/msc_facpub/46">Meyers et al., 1998</a>). At
+      along this coast at 2–3 m/s (<a href="https://agupubs.onlinelibrary.wiley.com/doi/10.1029/98JC02402">Meyers et al., 1998</a>). At
       that speed a wave would cross this whole section in about two weeks and appear as a narrow band tilted up to the
       right. No clear propagating band appears in 2026. Instead, positive anomalies build up first south of about 42°N in early
       October and spread slowly northward through November, with coast-wide pulses (vertical bands) during the
@@ -267,6 +269,15 @@
 
   </section>
 
+  <section class="card doc" id="references">
+    <h2>References</h2>
+    <ul class="refs">
+      <li>Meyers, S. D., A. Melsom, G. T. Mitchum, and J. J. O'Brien (1998). Detection of the fast Kelvin wave
+        teleconnection due to El Niño–Southern Oscillation. <i>Journal of Geophysical Research: Oceans</i>, 103(C12),
+        27655–27663. <a href="https://agupubs.onlinelibrary.wiley.com/doi/10.1029/98JC02402">https://doi.org/10.1029/98JC02402</a></li>
+    </ul>
+  </section>
+
 </main>
 
 <script>
@@ -317,7 +328,6 @@ async function main() {
     document.getElementById("dg-r2").textContent = dg.r2.toFixed(2);
     document.getElementById("dg-r").textContent = dg.r.toFixed(2);
     document.getElementById("dg-pct").textContent = Math.round(dg.r2 * 100);
-    document.querySelectorAll(".dg-days2").forEach(e => e.textContent = dg.days);
     document.getElementById("kp-r2").textContent = dg.r2.toFixed(2);
     document.querySelectorAll(".dg-clim").forEach(e => e.textContent = dg.clim);
     document.getElementById("dg-img").src = `wind_diagnostic.png?v=${dg.generated}`;
