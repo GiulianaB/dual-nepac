@@ -36,6 +36,10 @@
   .stat .v { font-size: 1.35rem; font-weight: 650; font-variant-numeric: tabular-nums; }
   .stat .d { color: var(--muted); font-size: .8rem; margin-top: .1rem; }
   .notes { color: var(--muted); font-size: .9rem; }
+  .keypoints { border-left: 4px solid var(--accent); }
+  .keypoints ul { margin: .3rem 0 0; padding-left: 1.2rem; }
+  .keypoints li { margin-bottom: .55rem; line-height: 1.5; }
+  .kicker { margin: -.1rem 0 .5rem; color: var(--accent); font-weight: 600; font-size: .95rem; }
   .byline { display: flex; gap: 2.2rem; flex-wrap: wrap; margin-top: 1.1rem; font-size: .95rem; }
   .byline .k, .toc .k { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; opacity: .7; }
   .toc { background: #fff; border-bottom: 1px solid var(--line); padding: .6rem 1.25rem; }
@@ -70,8 +74,9 @@
 <body>
 <header>
   <div class="wrap">
-    <h1>Sea surface height anomaly · Northeast Pacific</h1>
-    <p>DUACS satellite altimetry and ERA5 winds, 35–60°N, 150–120°W</p>
+    <h1>Record-high sea level off Vancouver Island</h1>
+    <p>What raised sea level off Bamfield in autumn 2026? DUACS satellite altimetry and ERA5 winds,
+      Northeast Pacific</p>
     <div class="byline">
       <div><span class="k">Author</span>Giuliana Berden</div>
       <div><span class="k">Published</span>November 26, 2026</div>
@@ -82,16 +87,101 @@
 <nav class="toc">
   <div class="wrap">
     <span class="k">On this page</span>
-    <a href="#video">Daily evolution</a>
-    <a href="#series">Bamfield time series</a>
-    <a href="#wind-maps">Wind maps</a>
+    <a href="#key-points">Key points</a>
+    <a href="#series">1. Record</a>
+    <a href="#wind-maps">2. Winds</a>
+    <a href="#diagnostic">3. Not only the wind</a>
+    <a href="#hovmoller">4. No Kelvin wave</a>
+    <a href="#video">5. Day by day</a>
     <a href="#datasets">Datasets</a>
   </div>
 </nav>
 
 <main>
+  <section class="card keypoints" id="key-points">
+    <h2>Key points</h2>
+    <ul>
+      <li><b>A record.</b> Sea level off Bamfield reached <b id="kp-rec">+41.4 cm</b> on
+        <span id="kp-rec-date">17 Nov 2026</span>, the highest daily value since 1993. The
+        <span id="kp-mtd">November 1–26</span> mean, <b id="kp-mtd-val">+29.6 cm</b>, is the
+        <b id="kp-mtd-rank">highest</b> of <span id="kp-n">34</span> years (a typical year: <span id="kp-mtd-typ">+4.7 cm</span>).</li>
+      <li><b>The winds played a role.</b> Poleward, downwelling-favorable winds were unusually strong:
+        <span id="kp-wmtd">November 1–21</span> mean <b id="kp-w-val">4.6 m/s</b>, against
+        <span id="kp-w-typ">1.4 m/s</span> in a typical year, the <b id="kp-w-rank">2nd strongest</b> since 1993.</li>
+      <li><b>But the wind alone is not enough.</b> In normal years the local wind explains only part of the sea level
+        variability off Bamfield (R² = <span id="kp-r2">0.31</span>). In 2026 sea level was well above what its wind
+        explains: already in September–October, with weak or even upwelling-favorable winds, and again in November.
+        Another forcing added to the local wind.</li>
+      <li><b>No fast coastal Kelvin wave.</b> Along the coast from 35°N to 55°N there is no signal travelling north at the
+        2–3 m/s expected for an El Niño coastally trapped Kelvin wave.</li>
+    </ul>
+  </section>
+
+
+  <section class="card" id="series">
+    <h2>1. The highest sea level on record off Bamfield</h2>
+    <p class="sub" id="point">Daily SSHA at the nearest DUACS grid point with data.</p>
+    <p class="sub" id="wind-note" hidden>Bottom panel: daily ERA5 10 m wind at the nearest ERA5 grid point
+      (<span id="wind-pt"></span>), projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
+      the northwest; red arrow on the wind maps). <b style="color:#2b6cb0">Positive</b>: poleward wind,
+      downwelling-favorable. <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.
+      The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 31-day running mean),
+      repeated every year, to compare any year with the usual seasonal cycle.</p>
+    <div class="stats">
+      <div class="stat"><div class="k">Latest</div><div class="v" id="s-last">–</div></div>
+      <div class="stat"><div class="k">30-day mean</div><div class="v" id="s-30">–</div></div>
+      <div class="stat"><div class="k">Record high</div><div class="v" id="s-max">–</div>
+        <div class="d" id="s-max-d"></div></div>
+    </div>
+    <div id="chart"></div>
+  </section>
+
+  <section class="card" id="wind-maps">
+    <h2>2. Downwelling-favorable winds played a role</h2>
+    <p class="kicker" id="wm-title">ERA5 10 m wind: monthly mean</p>
+    <p class="sub"><b>Left:</b> climatological mean for the month (<span id="wm-clim">1993–2025</span>).
+      <b>Right:</b> <span id="wm-period">the latest month</span>.
+      Colors show the mean wind speed (same scale in both maps) and arrows the direction and strength of the mean
+      wind (same scale in both maps). ★ = Bamfield.
+      <b style="color:#d62728">Red arrow</b>: alongshore direction used for the wind index in the time series
+      (toward the northwest; positive = downwelling-favorable).
+      <span id="wm-days"></span></p>
+    <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
+         style="width:100%; height:auto; border-radius:8px; display:block;">
+  </section>
+
+  <section class="card" id="diagnostic">
+    <h2>3. The local wind alone cannot explain the rise</h2>
+    <p class="sub">On the west coast, poleward wind pushes water toward the coast (Ekman transport, to the right of the
+      wind in the Northern Hemisphere) and raises sea level. <b>Left:</b> correlation between the alongshore wind stress
+      and the sea level anomaly off Bamfield, <span class="dg-clim">1993–2025</span>, with the wind leading by 0 to 30
+      days: sea level responds about <span id="dg-lag">4</span> days after the wind. <b>Right:</b> sea level against
+      the wind <span class="dg-lag2">4</span> days earlier, in <span id="dg-days">10</span>-day means. Grey: all
+      <span class="dg-clim">1993–2025</span>, and the black line is how much sea level the local wind normally
+      explains (R² = <span id="dg-r2">0.31</span>). Colored: 2026. Points above the line had more sea level than
+      their wind explains. In 2026, September and October lie well above the line with weak or even
+      upwelling-favorable winds, and November lies far above it despite the strong downwelling winds. Anomalies are
+      relative to the daily climatology; for 2026 the long-term sea level rise is removed.</p>
+    <img id="dg-img" src="wind_diagnostic.png" alt="Wind and sea level off Bamfield: lagged correlation and scatter"
+         style="width:100%; height:auto; border-radius:8px; display:block;">
+  </section>
+
+  <section class="card" id="hovmoller">
+    <h2>4. No sign of a fast coastal Kelvin wave</h2>
+    <p class="sub">Sea level anomaly along the <span id="hv-iso">250</span> m isobath (near the shelf break) from 35°N to
+      55°N, relative to the daily climatology, so the seasonal cycle is removed. <b>Top:</b> the whole year.
+      <b>Bottom:</b> the last 90 days. During El Niño, coastally trapped Kelvin waves have been tracked travelling north
+      along this coast at 2–3 m/s (<a href="https://digitalcommons.usf.edu/msc_facpub/46">Meyers et al., 1998</a>). At
+      that speed a wave would cross this whole section in about two weeks and appear as a narrow band tilted up to the
+      right. No such band appears in 2026. Instead, positive anomalies build up first south of about 42°N in early
+      October and spread slowly northward through November, with coast-wide pulses (vertical bands) during the
+      November storms.</p>
+    <img id="hv-img" src="hovmoller_anom.png" alt="Hovmoller of sea level anomaly along the 250 m isobath"
+         style="width:100%; height:auto; border-radius:8px; display:block;">
+  </section>
+
   <section class="card" id="video">
-    <h2 id="video-title">Daily evolution</h2>
+    <h2 id="video-title">5. Day by day</h2>
     <p class="sub">Each frame is one day. The three panels move together: the date in the title is the
       day shown on the map and the day marked on both panels to the right.</p>
     <video controls preload="metadata" playsinline src="ssha_bamfield.mp4">
@@ -128,37 +218,6 @@
         </ul>
       </div>
     </div>
-  </section>
-
-  <section class="card" id="series">
-    <h2>SSHA and alongshore wind off Bamfield, Vancouver Island</h2>
-    <p class="sub" id="point">Daily SSHA at the nearest DUACS grid point with data.</p>
-    <p class="sub" id="wind-note" hidden>Bottom panel: daily ERA5 10 m wind at the nearest ERA5 grid point
-      (<span id="wind-pt"></span>), projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
-      the northwest; red arrow on the wind maps). <b style="color:#2b6cb0">Positive</b>: poleward wind,
-      downwelling-favorable. <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.
-      The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 31-day running mean),
-      repeated every year, to compare any year with the usual seasonal cycle.</p>
-    <div class="stats">
-      <div class="stat"><div class="k">Latest</div><div class="v" id="s-last">–</div></div>
-      <div class="stat"><div class="k">30-day mean</div><div class="v" id="s-30">–</div></div>
-      <div class="stat"><div class="k">Record high</div><div class="v" id="s-max">–</div>
-        <div class="d" id="s-max-d"></div></div>
-    </div>
-    <div id="chart"></div>
-  </section>
-
-  <section class="card" id="wind-maps">
-    <h2 id="wm-title">ERA5 10 m wind: monthly mean</h2>
-    <p class="sub"><b>Left:</b> climatological mean for the month (<span id="wm-clim">1993–2025</span>).
-      <b>Right:</b> <span id="wm-period">the latest month</span>.
-      Colors show the mean wind speed (same scale in both maps) and arrows the direction and strength of the mean
-      wind (same scale in both maps). ★ = Bamfield.
-      <b style="color:#d62728">Red arrow</b>: alongshore direction used for the wind index in the time series
-      (toward the northwest; positive = downwelling-favorable).
-      <span id="wm-days"></span></p>
-    <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
-         style="width:100%; height:auto; border-radius:8px; display:block;">
   </section>
 
   <section class="card doc" id="datasets">
@@ -213,7 +272,7 @@ async function main() {
       `(nearest DUACS grid point with data), ${meta.start} to ${meta.end}.`;
     document.getElementById("data-end").textContent = meta.end;
     document.querySelectorAll(".mp").forEach(e => e.textContent = meta.mean_period.replace("-", "–"));
-    if (meta.video_year) document.getElementById("video-title").textContent = `Daily evolution, ${meta.video_year}`;
+    if (meta.video_year) document.getElementById("video-title").textContent = `5. Day by day, ${meta.video_year}`;
     if (meta.wind_lat != null) {
       document.getElementById("wind-pt").textContent =
         `${meta.wind_lat.toFixed(2)}°N, ${Math.abs(meta.wind_lon).toFixed(2)}°W`;
@@ -237,6 +296,28 @@ async function main() {
     document.getElementById("wm-img").src = `wind_maps.png?v=${wm.generated || Date.now()}`;
   } catch (e) {
     document.getElementById("wind-maps").hidden = true;      // no maps yet
+  }
+
+  // --- 3. diagnostic ---
+  try {
+    const dg = await (await fetch("wind_diagnostic.json", {cache: "no-cache"})).json();
+    document.getElementById("dg-lag").textContent = dg.lag;
+    document.querySelectorAll(".dg-lag2").forEach(e => e.textContent = dg.lag);
+    document.getElementById("dg-days").textContent = dg.days;
+    document.getElementById("dg-r2").textContent = dg.r2.toFixed(2);
+    document.getElementById("kp-r2").textContent = dg.r2.toFixed(2);
+    document.querySelectorAll(".dg-clim").forEach(e => e.textContent = dg.clim);
+    document.getElementById("dg-img").src = `wind_diagnostic.png?v=${dg.generated}`;
+  } catch (e) {
+    document.getElementById("diagnostic").hidden = true;      // figure not published yet
+  }
+  // --- 4. Hovmoller ---
+  try {
+    const hv = await (await fetch("hovmoller_anom.json", {cache: "no-cache"})).json();
+    document.getElementById("hv-iso").textContent = Math.round(hv.isobath);
+    document.getElementById("hv-img").src = `hovmoller_anom.png?v=${hv.generated}`;
+  } catch (e) {
+    document.getElementById("hovmoller").hidden = true;
   }
 
   // --- series ---
@@ -296,6 +377,7 @@ async function main() {
   }
 
   const lastYear = x[lastK].slice(0, 4);
+  keyPoints(x, y, w, maxK, lastK);
   const traces = [
     {x, y, type: "scatter", mode: "lines", name: "Daily SSHA",
      line: {color: "#a9c1dc", width: 1}, hovertemplate: "%{y:.1f} cm<extra>daily SSHA</extra>"},
@@ -356,6 +438,45 @@ async function main() {
                       bgcolor: "rgba(255,255,255,0.8)"};
   }
   Plotly.newPlot("chart", traces, layout, {responsive: true, displaylogo: false});
+}
+// Key points: record, month-to-date mean and its rank, and the same for the wind
+function keyPoints(x, y, w, maxK, lastK) {
+  const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August",
+                  "September", "October", "November", "December"];
+  const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
+  const ord = n => n + (["th", "st", "nd", "rd"][(n % 100 - 20) % 10] || ["th", "st", "nd", "rd"][n % 100] || "th");
+  const d = new Date(x[maxK] + "T00:00:00");
+  set("kp-rec", fmt(y[maxK]));
+  set("kp-rec-date", d.toLocaleDateString("en-GB", {day: "numeric", month: "short", year: "numeric"}));
+  // month-to-date mean of `arr` for every year, up to the last day with data
+  const mtd = (arr, k) => {
+    const yr = +x[k].slice(0, 4), mo = +x[k].slice(5, 7), dd = +x[k].slice(8, 10);
+    const by = {};
+    for (let i = 0; i < x.length; i++) {
+      if (arr[i] === null || +x[i].slice(5, 7) !== mo || +x[i].slice(8, 10) > dd) continue;
+      const Y = +x[i].slice(0, 4); (by[Y] = by[Y] || []).push(arr[i]);
+    }
+    const means = Object.entries(by).filter(([Y, v]) => v.length >= Math.min(dd, 5) * 0.8)
+                        .map(([Y, v]) => [+Y, v.reduce((a, b) => a + b, 0) / v.length]);
+    const cur = means.find(m => m[0] === yr);
+    const past = means.filter(m => m[0] >= 1993 && m[0] <= 2025).map(m => m[1]);
+    const rank = 1 + means.filter(m => m[1] > cur[1]).length;
+    return {yr, mo, dd, val: cur[1], typ: past.reduce((a, b) => a + b, 0) / past.length, rank, n: means.length};
+  };
+  const s = mtd(y, lastK);
+  set("kp-mtd", `${MONTHS[s.mo - 1]} 1–${s.dd}`);
+  set("kp-mtd-val", fmt(s.val));
+  set("kp-mtd-rank", s.rank === 1 ? "highest" : `${ord(s.rank)} highest`);
+  set("kp-n", s.n);
+  set("kp-mtd-typ", fmt(s.typ));
+  if (w && w.length) {
+    let lw = w.length - 1; while (lw > 0 && w[lw] === null) lw--;
+    const q = mtd(w, lw);
+    set("kp-wmtd", `${MONTHS[q.mo - 1]} 1–${q.dd}`);
+    set("kp-w-val", `${q.val.toFixed(1)} m/s`);
+    set("kp-w-typ", `${q.typ.toFixed(1)} m/s`);
+    set("kp-w-rank", q.rank === 1 ? "strongest" : `${ord(q.rank)} strongest`);
+  }
 }
 main();
 </script>
