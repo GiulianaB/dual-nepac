@@ -2,12 +2,12 @@
   "lat": 48.688,
   "lon": -125.312,
   "start": "1993-01-01",
-  "end": "2026-11-26",
+  "end": "2026-11-27",
   "mean_period": "1993-2025",
   "coast_angle": 315.0,
   "wind_clim": "1993-2025",
   "wind_lat": 48.75,
   "wind_lon": -125.25,
   "video_year": "2026",
-  "video_generated": 1795760597
+  "video_generated": 1795803383
 }
