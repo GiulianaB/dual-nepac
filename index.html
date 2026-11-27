@@ -29,7 +29,7 @@
   .card .sub { margin: 0 0 1rem; color: var(--muted); font-size: .95rem; }
   video { width: 100%; height: auto; border-radius: 8px; background: #000; display: block; }
   #chart { width: 100%; height: 470px; }
-  #chart.with-wind { height: 660px; }
+  #chart.with-wind, #chart2 { width: 100%; height: 660px; }
   .stats { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0 0 .75rem; }
   .stat { border: 1px solid var(--line); border-radius: 10px; padding: .55rem .9rem; min-width: 170px; }
   .stat .k { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
@@ -126,16 +126,8 @@
       <span id="s1-mtd-typ">+4.7 cm</span> in a typical year. <span id="s1-sep">The rise began earlier: September 2026 was
       already the highest September in the record.</span></p>
     <p class="sub" id="point" style="margin-bottom:.2rem">Daily SSHA at the nearest DUACS grid point with data.</p>
-    <p class="sub" id="wind-point" hidden>Daily ERA5 10 m wind at the nearest ERA5 grid point
-      (<span id="wind-pt"></span>), <span id="wind-range"></span>.</p>
-    <p class="sub" id="top-note" style="margin-bottom:.2rem">Top panel: sea level. Dotted line: its daily
-      climatology (<span class="mp">1993–2025</span>, 10-day running mean); dashed red line: the long-term linear
-      trend (<span id="s1-trend">–</span>).</p>
-    <p class="sub" id="wind-note" hidden>Bottom panel: the wind projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
-      the northwest; red arrow on the wind maps). <b style="color:#2b6cb0">Positive</b>: poleward wind,
-      downwelling-favorable. <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.
-      The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 10-day running mean),
-      repeated every year, to compare any year with the usual seasonal cycle.</p>
+    <p class="sub" id="top-note">Dotted line: the daily climatology of sea level (<span class="mp">1993–2025</span>,
+      10-day running mean); dashed red line: the long-term linear trend (<span id="s1-trend">–</span>).</p>
     <div class="stats">
       <div class="stat"><div class="k" id="s-last-k">Latest</div><div class="v" id="s-last">–</div></div>
       <div class="stat"><div class="k">Last 10 days</div><div class="v" id="s-30">–</div></div>
@@ -143,6 +135,14 @@
         <div class="d" id="s-max-d"></div></div>
     </div>
     <div id="chart"></div>
+    <div id="sy-block" hidden>
+      <p class="sub" style="margin-top:1.5rem">Every year from January to December: sea level off Bamfield
+        (SSHA relative to the <span class="mp">1993–2025</span> mean, 10-day running mean).
+        Grey: one line per year. Red: the year chosen below.</p>
+      <label class="sub" for="sy-sel">Year in red:
+        <select id="sy-sel" style="font-size:.95rem; margin-left:.3rem"></select></label>
+      <div id="sy-chart" style="width:100%; height:430px"></div>
+    </div>
   </section>
 
   <section class="card" id="wind-maps">
@@ -156,11 +156,20 @@
       <span id="wm-days"></span></p>
     <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
          style="width:100%; height:auto; border-radius:8px; display:block;">
+    <div id="s2-series" hidden>
+      <p class="sub" style="margin-top:1.5rem; margin-bottom:.2rem">(A) Sea level off Bamfield, as in section 1.
+        (B) Daily ERA5 10 m wind at the nearest ERA5 grid point (<span id="wind-pt"></span>),
+        <span id="wind-range"></span>, projected onto the alongshore direction (<span id="wind-ang">315</span>°,
+        toward the northwest; red arrow on the maps). <b style="color:#2b6cb0">Positive</b>: poleward wind,
+        downwelling-favorable. <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.</p>
+      <p class="sub">Dotted lines: daily climatologies (<span id="wind-clim">1993–2025</span>, 10-day running mean),
+        repeated every year, to compare any year with the usual seasonal cycle.</p>
+      <div id="chart2"></div>
+    </div>
     <div id="wy-block" hidden>
-      <p class="sub" style="margin-top:1.5rem">Every year from January to December, off Bamfield:
-        (A) daily alongshore wind, the same as the bottom panel in section 1 (positive = poleward,
-        downwelling-favorable); (B) daily sea level (SSHA relative to the <span class="mp">1993–2025</span> mean).
-        Both are 10-day running means. Grey: one line per year. Red: the year chosen below.</p>
+      <p class="sub" style="margin-top:1.5rem">Every year from January to December, off Bamfield: (A) sea level;
+        (B) alongshore wind (positive = poleward, downwelling-favorable). Both are 10-day running means.
+        Grey: one line per year. Red: the year chosen below.</p>
       <label class="sub" for="wy-sel">Year in red:
         <select id="wy-sel" style="font-size:.95rem; margin-left:.3rem"></select></label>
       <div id="wy-chart" style="width:100%; height:720px"></div>
@@ -171,7 +180,7 @@
     <h2>3. The local wind alone cannot explain the rise</h2>
     <p class="lead">The local wind explains only part of the sea level off Bamfield, and in 2026 sea level was higher than expected due to the winds.</p>
     <p>On the west coast, poleward winds push water toward the coast and raise sea level. To measure how much of the sea level the local wind
-      explains, we compared the daily alongshore wind with sea level (the two series of the first figure) over
+      explains, we compared the daily alongshore wind with sea level (the two time series of section 2) over
       <span class="dg-clim">1993–2025</span>. Their cross-correlation (A) peaks when the wind leads sea level by
       <span id="dg-lag">4</span> days (r = <span id="dg-r">0.44</span>). Using that lag and
       consecutive <span id="dg-days">10</span>-day means (B; resample, not a running mean), the usual relationship between wind and sea level (grey points
@@ -181,7 +190,7 @@
       the time series above). In November the winds became strongly downwelling-favorable, but sea level rose far
       above what the relationship predicts, and one of the November points lies outside the cloud of previous years.
       Another forcing added to the local wind.</p>
-    <p class="sub">Both series are the daily series of the first figure: SSHA off Bamfield (DUACS, relative to the
+    <p class="sub">Both series are the daily time series of section 2: SSHA off Bamfield (DUACS, relative to the
       1993–2025 mean) and the ERA5 10 m wind projected onto the red arrow (m/s). No climatology is removed, so the
       seasonal cycle is included. Before the analysis, both time series are detrended. Panel A uses the daily series of
       1993–2025; panel B uses 10-day means, with the wind shifted by the lag of maximum correlation.</p>
@@ -382,6 +391,7 @@ async function main() {
     return k < 0 ? null : rows.map(r => (r[k] === undefined || r[k].trim() === "") ? null : +r[k]);
   };
   const x = rows.map(r => r[0]);
+  window._seriesX = x;
   const y = num("ssha_cm");
   const sc = num("ssha_clim_cm");
   const w = num("wind_along_ms") || [];
@@ -426,6 +436,18 @@ async function main() {
 
   const lastYear = x[lastK].slice(0, 4);
   keyPoints(x, y, w, maxK, lastK);
+  const windOK = hasWind && w.some(v => v !== null);
+  drawSeries("chart", false);                      // section 1: sea level only
+  if (windOK) {                                    // section 2: (A) sea level, (B) wind
+    document.getElementById("s2-series").hidden = false;
+    drawSeries("chart2", true);
+  }
+  const panelSSHA = {data: sm, unit: "cm", title: "SSHA (cm)"};
+  yearsChart("sy-chart", "sy-sel", "sy-block", [panelSSHA]);
+  if (windOK) yearsChart("wy-chart", "wy-sel", "wy-block",
+    [{...panelSSHA, title: "A) SSHA (cm)"}, {data: runmean(w), unit: "m/s", title: "B) Alongshore wind (m/s)"}]);
+
+  function drawSeries(div, withWind) {
   const traces = [
     {x, y, type: "scatter", mode: "lines", name: "Daily SSHA",
      line: {color: "#a9c1dc", width: 1}, hovertemplate: "%{y:.1f} cm<extra>daily SSHA</extra>"},
@@ -475,10 +497,8 @@ async function main() {
       rangeslider: {visible: true, thickness: 0.06},
     },
   };
-  if (hasWind && w.some(v => v !== null)) {
-    document.getElementById("chart").classList.add("with-wind");
-    document.getElementById("wind-note").hidden = false;
-    document.getElementById("wind-point").hidden = false;
+  if (withWind) {
+    layout.yaxis.title.text = "A) SSHA (cm)";
     let w0 = 0; while (w0 < w.length && w[w0] === null) w0++;
     let w1 = w.length - 1; while (w1 > 0 && w[w1] === null) w1--;
     document.getElementById("wind-range").textContent = `${x[w0]} to ${x[w1]}`;
@@ -502,73 +522,68 @@ async function main() {
        line: {color: "#222", width: 1.6, dash: "dot"},
        hovertemplate: "%{y:.1f} m/s<extra>climatology</extra>"});
     layout.yaxis.domain = [0.44, 1];
-    layout.yaxis2 = {domain: [0, 0.32], title: {text: "Alongshore wind (m/s)"}, zeroline: true,
+    layout.yaxis2 = {domain: [0, 0.32], title: {text: "B) Alongshore wind (m/s)"}, zeroline: true,
                      zerolinecolor: "#888", gridcolor: "#eef1f4"};
     layout.xaxis.anchor = "y2";
     // legend of the wind panel, just above it
     layout.legend2 = {orientation: "h", x: 0, y: 0.335, yanchor: "bottom", xref: "paper", yref: "paper",
                       bgcolor: "rgba(255,255,255,0.8)"};
   }
-  Plotly.newPlot("chart", traces, layout, {responsive: true, displaylogo: false});
-  yearsChart(x, sm, w.length ? runmean(w) : []);    // 10-day running means, computed on the continuous series
+  Plotly.newPlot(div, traces, layout, {responsive: true, displaylogo: false});
+  }
 }
 
-// Section 2: every year Jan-Dec, (A) wind and (B) sea level; the reader picks the year drawn in red
-function yearsChart(x, y, w) {
-  const el = document.getElementById("wy-chart"), sel = document.getElementById("wy-sel");
+// Every year Jan-Dec, one line per year in grey, the chosen year in red.
+// panels: [{data, unit, title}], top to bottom; data are 10-day running means of the continuous series.
+function yearsChart(divId, selId, blockId, panels) {
+  const el = document.getElementById(divId), sel = document.getElementById(selId);
   if (!el || !sel) return;
+  const x = window._seriesX;
   const by = {};
   for (let i = 0; i < x.length; i++) {
     const Y = +x[i].slice(0, 4);
-    const o = by[Y] || (by[Y] = {d: [], w: [], y: []});
+    const o = by[Y] || (by[Y] = {d: [], v: panels.map(() => [])});
     o.d.push("2000-" + x[i].slice(5));          // leap reference year: every calendar day has a place
-    o.w.push(w.length ? w[i] : null);
-    o.y.push(y[i]);
+    panels.forEach((p, k) => o.v[k].push(p.data[i]));
   }
   const years = Object.keys(by).map(Number).sort((a, b) => a - b);
   if (!years.length) return;
   sel.innerHTML = years.slice().reverse().map(Y => `<option value="${Y}">${Y}</option>`).join("");
   const GREY = "rgba(110,110,110,0.33)", RED = "#c0392b";
+  const n = panels.length, gap = 0.08, h = (1 - gap * (n - 1)) / n;
+  const yname = k => k === 0 ? "y" : `y${k + 1}`;
 
   function draw(cur) {
     const traces = [];
     let first = true;
-    for (const Y of years) {
-      if (Y === cur) continue;
-      const common = {x: by[Y].d, type: "scatter", mode: "lines", legendgroup: "other",
-                      line: {color: GREY, width: 0.7}, name: "Other years"};
-      traces.push({...common, y: by[Y].w, yaxis: "y", showlegend: first,
-                   hovertemplate: `${Y}: %{y:.1f} m/s<extra></extra>`});
-      traces.push({...common, y: by[Y].y, yaxis: "y2", showlegend: false,
-                   hovertemplate: `${Y}: %{y:.1f} cm<extra></extra>`});
-      first = false;
+    for (const Y of [...years.filter(Y => Y !== cur), cur]) {
+      const isCur = Y === cur;
+      panels.forEach((p, k) => traces.push({
+        x: by[Y].d, y: by[Y].v[k], yaxis: yname(k), type: "scatter", mode: "lines",
+        line: isCur ? {color: RED, width: 2.2} : {color: GREY, width: 0.7},
+        name: isCur ? String(Y) : "Other years", legendgroup: isCur ? "cur" : "other",
+        showlegend: k === 0 && (isCur || first),
+        hovertemplate: `${Y}: %{y:.1f} ${p.unit}<extra></extra>`}));
+      if (!isCur) first = false;
     }
-    const red = {x: by[cur].d, type: "scatter", mode: "lines", legendgroup: "cur",
-                 line: {color: RED, width: 2.2}, name: String(cur)};
-    traces.push({...red, y: by[cur].w, yaxis: "y", hovertemplate: `${cur}: %{y:.1f} m/s<extra></extra>`});
-    traces.push({...red, y: by[cur].y, yaxis: "y2", showlegend: false,
-                 hovertemplate: `${cur}: %{y:.1f} cm<extra></extra>`});
-    const ax = {zeroline: true, zerolinecolor: "#555", gridcolor: "#eef1f4"};
     const layout = {
-      margin: {t: 30, r: 15, b: 40, l: 70}, hovermode: "closest", showlegend: true,
-      legend: {orientation: "h", x: 0, y: 1.06, yanchor: "bottom"},
-      xaxis: {range: ["2000-01-01", "2000-12-31"], tickformat: "%b", dtick: "M1", anchor: "y2",
-              gridcolor: "#eef1f4"},
-      yaxis: {...ax, domain: [0.54, 1], title: {text: "Alongshore wind (m/s)"}},
-      yaxis2: {...ax, domain: [0, 0.46], title: {text: "SSHA (cm)"}},
-      annotations: [
-        {text: "<b>A</b>  Alongshore wind", xref: "paper", yref: "paper", x: 0.005, y: 1, yanchor: "top",
-         showarrow: false, font: {size: 14}, bgcolor: "rgba(255,255,255,0.8)"},
-        {text: "<b>B</b>  Sea level", xref: "paper", yref: "paper", x: 0.005, y: 0.46, yanchor: "top",
-         showarrow: false, font: {size: 14}, bgcolor: "rgba(255,255,255,0.8)"}]
+      margin: {t: 10, r: 15, b: 40, l: 70}, hovermode: "closest",
+      legend: {orientation: "h", x: 0, y: 1.02, yanchor: "bottom"},
+      xaxis: {range: ["2000-01-01", "2000-12-31"], tickformat: "%b", dtick: "M1",
+              anchor: yname(n - 1), gridcolor: "#eef1f4"},
     };
+    panels.forEach((p, k) => {
+      const top = 1 - k * (h + gap);
+      layout[k === 0 ? "yaxis" : `yaxis${k + 1}`] = {domain: [top - h, top], title: {text: p.title},
+        zeroline: true, zerolinecolor: "#555", gridcolor: "#eef1f4"};
+    });
     Plotly.react(el, traces, layout, {responsive: true, displaylogo: false});
   }
-  const lastWithData = years.slice().reverse().find(Y => by[Y].y.some(v => v !== null));
-  sel.value = String(lastWithData);
+  const last = years.slice().reverse().find(Y => by[Y].v[0].some(v => v !== null));
+  sel.value = String(last);
   sel.onchange = () => draw(+sel.value);
-  document.getElementById("wy-block").hidden = false;   // visible before drawing, so Plotly gets the right size
-  draw(lastWithData);
+  document.getElementById(blockId).hidden = false;   // visible before drawing, so Plotly gets the right size
+  draw(last);
 }
 // Key points: record, month-to-date mean and its rank, and the same for the wind
 function keyPoints(x, y, w, maxK, lastK) {
