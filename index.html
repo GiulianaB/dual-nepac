@@ -160,7 +160,7 @@
       <p class="sub" style="margin-top:1.5rem">Every year from January to December, off Bamfield:
         (A) daily alongshore wind, the same as the bottom panel in section 1 (positive = poleward,
         downwelling-favorable); (B) daily sea level (SSHA relative to the <span class="mp">1993–2025</span> mean).
-        Grey: one line per year. Red: the year chosen below.</p>
+        Both are 10-day running means. Grey: one line per year. Red: the year chosen below.</p>
       <label class="sub" for="wy-sel">Year in red:
         <select id="wy-sel" style="font-size:.95rem; margin-left:.3rem"></select></label>
       <div id="wy-chart" style="width:100%; height:720px"></div>
@@ -510,7 +510,7 @@ async function main() {
                       bgcolor: "rgba(255,255,255,0.8)"};
   }
   Plotly.newPlot("chart", traces, layout, {responsive: true, displaylogo: false});
-  yearsChart(x, y, w);
+  yearsChart(x, sm, w.length ? runmean(w) : []);    // 10-day running means, computed on the continuous series
 }
 
 // Section 2: every year Jan-Dec, (A) wind and (B) sea level; the reader picks the year drawn in red
