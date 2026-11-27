@@ -149,7 +149,7 @@
     <h2>2. Downwelling-favorable winds played a role</h2>
     <p class="lead">In November 2026 the winds along the coast were downwelling-favorable and stronger than usual.
       They blew toward the northwest (poleward), pushing water toward the coast and raising sea level.</p>
-    <p class="sub">Left: usual winds for these days (climatology <span id="wm-clim">1993–2025</span>).
+    <p class="sub">Left: <span id="wm-clim-days">November 1–20</span> climatology (<span id="wm-clim">1993–2025</span>).
       Right: <span id="wm-period">the latest month</span>. Colors: mean wind speed; arrows: direction and
       strength of the mean wind (same scales in both maps). ★ = Bamfield.
       <span style="color:#d62728">Red arrow</span>: alongshore direction used for the wind in the time series.
@@ -166,6 +166,11 @@
         repeated every year, to compare any year with the usual seasonal cycle.</p>
       <div id="chart2"></div>
     </div>
+    <p style="margin-top:1.5rem">Winds like those of 2026 had been seen before, even lasting longer; sea levels like
+      those of 2026 had not. In October–November 2016 the downwelling-favorable winds were stronger and more persistent
+      than in 2026: from 1 October to 21 November they averaged 4.1 m/s, against 1.6 m/s in 2026. Yet sea level in
+      2016 rose to only about 25 cm. In 2026 the downwelling-favorable winds lasted about three weeks, from early
+      November, and sea level reached 42.5 cm. Mark 2016 to compare with 2026.</p>
     <div id="wy-block" hidden>
       <p class="sub" style="margin-top:1.5rem">Every year from January to December, off Bamfield: (A) sea level;
         (B) alongshore wind (positive = poleward, downwelling-favorable). Both are 10-day running means.
@@ -339,6 +344,7 @@ async function main() {
     const wm = await (await fetch("wind_maps.json", {cache: "no-cache"})).json();
     document.getElementById("wm-period").textContent = wm.period;
     document.getElementById("wm-clim").textContent = wm.clim;
+    document.getElementById("wm-clim-days").textContent = wm.period.replace(/\s*\d{4}$/, "");   // "November 1–20"
     if (wm.last_day < new Date(wm.year, wm.month, 0).getDate())
       document.getElementById("wm-days").textContent =
         `The month is not complete yet in ERA5, so the climatology uses the same days (1–${wm.last_day}).`;
