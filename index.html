@@ -127,9 +127,10 @@
       already the highest September in the record.</span> The top panel shows sea level (dotted line: its usual
       seasonal cycle; dashed red line: the long-term linear trend, <span id="s1-trend">–</span>); the bottom panel,
       the wind along the coast.</p>
-    <p class="sub" id="point">Daily SSHA at the nearest DUACS grid point with data.</p>
-    <p class="sub" id="wind-note" hidden>Bottom panel: daily ERA5 10 m wind at the nearest ERA5 grid point
-      (<span id="wind-pt"></span>), <span id="wind-range"></span>, projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
+    <p class="sub" id="point" style="margin-bottom:.2rem">Daily SSHA at the nearest DUACS grid point with data.</p>
+    <p class="sub" id="wind-point" hidden>Daily ERA5 10 m wind at the nearest ERA5 grid point
+      (<span id="wind-pt"></span>), <span id="wind-range"></span>.</p>
+    <p class="sub" id="wind-note" hidden>Bottom panel: the wind projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
       the northwest; red arrow on the wind maps). <b style="color:#2b6cb0">Positive</b>: poleward wind,
       downwelling-favorable. <b style="color:#d9822b">Negative</b>: equatorward wind, upwelling-favorable.
       The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 10-day running mean),
@@ -154,6 +155,13 @@
       <span id="wm-days"></span></p>
     <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
          style="width:100%; height:auto; border-radius:8px; display:block;">
+    <div id="wy-block" hidden>
+      <p class="sub" style="margin-top:1.5rem">Daily alongshore wind off Bamfield (the wind of the bottom panel in
+        section 1) from January to December. Grey: <span id="wy-range">1993–2025</span>, one line per year.
+        Red: <span id="wy-year">2026</span><span id="wy-last"></span>.</p>
+      <img id="wy-img" alt="Daily alongshore wind off Bamfield, every year, current year in red"
+           style="width:100%; height:auto; border-radius:8px; display:block;">
+    </div>
   </section>
 
   <section class="card" id="diagnostic">
@@ -316,6 +324,18 @@ async function main() {
 
   // --- wind maps ---
   try {
+    const wy = await (await fetch("wind_years.json", {cache: "no-cache"})).json();
+    document.getElementById("wy-range").textContent = `${wy.first_year}–${wy.year - 1}`;
+    document.getElementById("wy-year").textContent = wy.year;
+    if (wy.last_day) {
+      const dl = new Date(wy.last_day + "T00:00:00");
+      document.getElementById("wy-last").textContent =
+        ` (through ${dl.toLocaleDateString("en-GB", {day: "numeric", month: "short"})})`;
+    }
+    document.getElementById("wy-img").src = `wind_years.png?v=${wy.generated}`;
+    document.getElementById("wy-block").hidden = false;
+  } catch (e) { /* no yearly wind figure yet */ }
+  try {
     const wm = await (await fetch("wind_maps.json", {cache: "no-cache"})).json();
     document.getElementById("wm-period").textContent = wm.period;
     document.getElementById("wm-clim").textContent = wm.clim;
@@ -467,6 +487,7 @@ async function main() {
   if (hasWind && w.some(v => v !== null)) {
     document.getElementById("chart").classList.add("with-wind");
     document.getElementById("wind-note").hidden = false;
+    document.getElementById("wind-point").hidden = false;
     let w0 = 0; while (w0 < w.length && w[w0] === null) w0++;
     let w1 = w.length - 1; while (w1 > 0 && w[w1] === null) w1--;
     document.getElementById("wind-range").textContent = `${x[w0]} to ${x[w1]}`;
