@@ -135,7 +135,7 @@
       The dotted line is the daily climatology (<span id="wind-clim">1993–2025</span>, 10-day running mean),
       repeated every year, to compare any year with the usual seasonal cycle.</p>
     <div class="stats">
-      <div class="stat"><div class="k">Latest</div><div class="v" id="s-last">–</div></div>
+      <div class="stat"><div class="k" id="s-last-k">Latest</div><div class="v" id="s-last">–</div></div>
       <div class="stat"><div class="k">Last 10 days</div><div class="v" id="s-30">–</div></div>
       <div class="stat"><div class="k">Record high</div><div class="v" id="s-max">–</div>
         <div class="d" id="s-max-d"></div></div>
@@ -397,6 +397,12 @@ async function main() {
   let maxK = 0; y.forEach((v, k) => { if (v !== null && v > y[maxK]) maxK = k; });
   document.getElementById("s-last").textContent = fmt(y[lastK]);
   document.getElementById("s-last").title = x[lastK];
+  {
+    const dl = new Date(x[lastK] + "T00:00:00");
+    const t = new Date(), today = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+    const ds = dl.toLocaleDateString("en-GB", {day: "numeric", month: "short", year: "numeric"});
+    document.getElementById("s-last-k").textContent = x[lastK] === today ? `Today (${ds})` : ds;
+  }
   document.getElementById("s-30").textContent = fmt(recent.reduce((a, b) => a + b, 0) / recent.length);
   document.getElementById("s-max").textContent = fmt(y[maxK]);
   document.getElementById("s-max").title = x[maxK];
