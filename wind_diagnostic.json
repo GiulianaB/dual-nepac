@@ -2,9 +2,10 @@
   "year": 2026,
   "days": 10,
   "lag": 4,
-  "r": 0.29,
-  "r2": 0.26,
+  "r": 0.44,
+  "r2": 0.5,
   "clim": "1993\u20132025",
   "method": "linear detrend",
-  "generated": "20261126225033"
+  "series": "daily SSHA and alongshore wind (m/s), no climatology removed",
+  "generated": "20261126225450"
 }
