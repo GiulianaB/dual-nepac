@@ -18,10 +18,6 @@ Live page: <https://giulianab.github.io/dual-nepac/>
 | `wind_diagnostic.png`, `wind_diagnostic.json` | wind vs. sea level diagnostic (section 3) | `wind_sealevel_diagnostic.py` → `make_site.py` |
 | `hovmoller_anom.png`, `hovmoller_anom.json` | Hovmöller of the anomaly (section 4) | `make_hovmoller.py` → `make_site.py` |
 
-The `.json` files carry a `generated` stamp; the page adds it to the image and video addresses so browsers
-always load the newest version.
-
-## Update
 
 From the `el_ninio` folder:
 
