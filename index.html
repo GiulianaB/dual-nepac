@@ -121,8 +121,8 @@
   <section class="card" id="series">
     <h2>1. The highest sea level on record off Bamfield</h2>
     <p class="lead">Sea level off Bamfield reached <b id="s1-rec">+41.4 cm</b> on <span id="s1-rec-date">17 Nov 2026</span>,
-      the highest daily value since 1993. The <span id="s1-mtd">November 1–26</span> mean, <b id="s1-mtd-val">+29.6 cm</b>,
-      is the <b id="s1-mtd-rank">highest</b> of <span id="s1-n">34</span> years, against
+      the highest daily value since 1993. The <span id="s1-mtd">November 1–26</span> mean, <span id="s1-mtd-val">+29.6 cm</span>,
+      is the <span id="s1-mtd-rank">highest</span> of <span id="s1-n">34</span> years, against
       <span id="s1-mtd-typ">+4.7 cm</span> in a typical year. <span id="s1-sep">The rise began earlier: September 2026 was
       already the highest September in the record.</span> The top panel shows sea level (dotted line: its usual
       seasonal cycle; dashed red line: the long-term linear trend, <span id="s1-trend">–</span>); the bottom panel,
@@ -145,13 +145,12 @@
 
   <section class="card" id="wind-maps">
     <h2>2. Downwelling-favorable winds played a role</h2>
-    <p class="kicker" id="wm-title">ERA5 10 m wind: monthly mean</p>
     <p class="lead">In November 2026 the winds along the coast blew strongly toward the northwest (poleward). These winds are
       <b>downwelling-favorable</b>: they push water toward the coast and raise sea level.</p>
-    <p class="sub"><b>Left:</b> usual winds for these days (climatology <span id="wm-clim">1993–2025</span>).
-      <b>Right:</b> <span id="wm-period">the latest month</span>. Colors: mean wind speed; arrows: direction and
+    <p class="sub">Left: usual winds for these days (climatology <span id="wm-clim">1993–2025</span>).
+      Right: <span id="wm-period">the latest month</span>. Colors: mean wind speed; arrows: direction and
       strength of the mean wind (same scales in both maps). ★ = Bamfield.
-      <b style="color:#d62728">Red arrow</b>: alongshore direction used for the wind in the time series.
+      <span style="color:#d62728">Red arrow</span>: alongshore direction used for the wind in the time series.
       <span id="wm-days"></span></p>
     <img id="wm-img" src="wind_maps.png" alt="ERA5 10 m wind maps: climatology, current month and anomaly"
          style="width:100%; height:auto; border-radius:8px; display:block;">
@@ -324,7 +323,6 @@ async function main() {
   // --- wind maps ---
   try {
     const wm = await (await fetch("wind_maps.json", {cache: "no-cache"})).json();
-    document.getElementById("wm-title").textContent = `ERA5 10 m wind: ${wm.period}`;
     document.getElementById("wm-period").textContent = wm.period;
     document.getElementById("wm-clim").textContent = wm.clim;
     if (wm.last_day < new Date(wm.year, wm.month, 0).getDate())
