@@ -126,7 +126,8 @@
       is the <b id="s1-mtd-rank">highest</b> of <span id="s1-n">34</span> years, against
       <span id="s1-mtd-typ">+4.7 cm</span> in a typical year. <span id="s1-sep">The rise began earlier: September 2026 was
       already the highest September in the record.</span> The top panel shows sea level (dotted line: its usual
-      seasonal cycle); the bottom panel, the wind along the coast.</p>
+      seasonal cycle; dashed red line: the long-term linear trend, <span id="s1-trend">–</span>); the bottom panel,
+      the wind along the coast.</p>
     <p class="sub" id="point">Daily SSHA at the nearest DUACS grid point with data.</p>
     <p class="sub" id="wind-note" hidden>Bottom panel: daily ERA5 10 m wind at the nearest ERA5 grid point
       (<span id="wind-pt"></span>), projected onto the alongshore direction (<span id="wind-ang">315</span>°, toward
@@ -173,7 +174,8 @@
       high while the winds were weak or upwelling-favorable (see also the time series above). In November the winds
       became strongly downwelling-favorable, but sea level rose far above what the relationship predicts, outside the
       cloud of previous years. Another forcing added to the local wind.</p>
-    <p class="sub">Anomalies are relative to the daily climatology; for 2026 the long-term sea level rise is removed.</p>
+    <p class="sub">Anomalies are relative to the daily climatology. Before the analysis, the long-term sea level rise
+      (a linear trend fitted over 1993–2025) is removed from all years, for both sea level and wind.</p>
     <img id="dg-img" src="wind_diagnostic.png" alt="Wind and sea level off Bamfield: lagged correlation and scatter"
          style="width:100%; height:auto; border-radius:8px; display:block;">
   </section>
@@ -409,6 +411,26 @@ async function main() {
     {x: [x[lastK]], y: [y[lastK]], type: "scatter", mode: "markers", name: "Latest",
      marker: {color: "#c0392b", size: 9}, hovertemplate: "%{y:.1f} cm<extra>latest</extra>"},
   ];
+  // linear trend (long-term sea level rise), least squares over 1993-2025
+  {
+    const t0 = Date.parse(x[0]), yr = i => (Date.parse(x[i]) - t0) / 3.15576e10;   // years since start
+    let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (let i = 0; i < x.length; i++) {
+      const Y = +x[i].slice(0, 4);
+      if (y[i] === null || Y < 1993 || Y > 2025) continue;
+      const u = yr(i); n++; sx += u; sy += y[i]; sxx += u * u; sxy += u * y[i];
+    }
+    if (n > 365) {
+      const b = (n * sxy - sx * sy) / (n * sxx - sx * sx), a = (sy - b * sx) / n;
+      const ends = [0, x.length - 1];
+      traces.push({x: ends.map(i => x[i]), y: ends.map(i => a + b * yr(i)), type: "scatter", mode: "lines",
+                   name: `Linear trend 1993–2025 (${(b * 10).toFixed(1)} mm/yr)`,
+                   line: {color: "#c0392b", width: 1.6, dash: "dash"},
+                   hovertemplate: "%{y:.1f} cm<extra>linear trend</extra>"});
+      const el = document.getElementById("s1-trend");
+      if (el) el.textContent = `${(b * 10).toFixed(1)} mm/yr`;
+    }
+  }
   if (sc) traces.push(
     {x, y: sc, type: "scatter", mode: "lines", name: `SSHA climatology (${climYears})`,
      line: {color: "#222", width: 1.6, dash: "dot"}, hovertemplate: "%{y:.1f} cm<extra>SSHA climatology</extra>"});
